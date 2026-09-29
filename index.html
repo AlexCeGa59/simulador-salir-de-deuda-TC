@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Cuánto te cuesta el pago mínimo?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eef4ef;--card:#fff;--ink:#24352f;--soft:#5a6b64;
+    --teal:#0f6e64;--teal-deep:#0b4f48;--green:#2e9e5b;--amber:#e0982f;--red:#e0553f;--gold:#dca24e;
+    --line:#e2ebe4;--shadow:0 18px 50px rgba(15,78,72,.14);--r:22px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Nunito',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%, #f7fbf7 0%, rgba(247,251,247,0) 60%),var(--bg);
+    color:var(--ink);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px 16px 40px;-webkit-font-smoothing:antialiased;}
+  .wrap{width:100%;max-width:580px;margin-top:auto;margin-bottom:auto}
+  .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden}
+  .screen{display:none;animation:fade .45s ease both}.screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @media (prefers-reduced-motion:reduce){.screen{animation:none}}
+
+  .hero{padding:42px 30px 32px;text-align:center;background:linear-gradient(160deg,#0f6e64,#0b4f48);color:#fff}
+  .hero .ic{width:76px;height:76px;margin:0 auto 16px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:36px}
+  .kicker{font-family:'Fredoka';font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:12px;opacity:.85;margin-bottom:10px}
+  .hero h1{font-family:'Fredoka';font-weight:700;font-size:28px;line-height:1.1;margin-bottom:12px}
+  .hero p{font-size:15.5px;line-height:1.5;opacity:.94;max-width:40ch;margin:0 auto}
+  .welcome-body{padding:26px 30px 32px}
+  .idea{background:#f3f8f4;border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:12px;padding:14px 16px;font-size:14.5px;line-height:1.5;margin-bottom:22px}
+  .idea b{color:var(--teal-deep)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:'Fredoka';font-weight:600;font-size:18px;background:var(--gold);color:#4a2f00;border:none;border-radius:15px;padding:16px 26px;width:100%;cursor:pointer;box-shadow:0 8px 20px rgba(220,162,78,.35);transition:transform .12s,box-shadow .12s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(220,162,78,.45)}
+  .btn:active{transform:translateY(0)}
+  .btn:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+  .calc-head{padding:22px 26px 18px;background:linear-gradient(160deg,#0f6e64,#0b4f48);color:#fff}
+  .calc-head h2{font-family:'Fredoka';font-weight:600;font-size:19px}
+  .body{padding:24px 26px 28px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-family:'Fredoka';font-weight:600;font-size:14.5px;margin-bottom:7px}
+  .field .hint{font-size:12.5px;color:var(--soft);margin-top:5px;line-height:1.4}
+  .inpwrap{display:flex;align-items:center;gap:6px;background:#f4f7f4;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px}
+  .inpwrap:focus-within{border-color:var(--teal)}
+  .inpwrap .pfx{font-family:'Fredoka';font-weight:700;color:var(--soft);font-size:18px}
+  .inpwrap input{flex:1;border:none;background:transparent;font-family:'Fredoka';font-weight:700;font-size:18px;color:var(--ink);outline:none;width:100%;min-width:0}
+  .inpwrap .sfx{font-size:13px;color:var(--soft);white-space:nowrap}
+
+  .empty{text-align:center;color:var(--soft);font-size:14.5px;padding:24px 10px;line-height:1.5}
+  .empty .big{font-size:32px;display:block;margin-bottom:8px}
+  .warn{background:#fdf6e9;border:1px solid #f2e3c4;border-radius:12px;padding:14px 16px;font-size:14px;color:#8a6a1f;line-height:1.5}
+  .warn b{color:#6b5010}
+
+  .versus{display:flex;flex-direction:column;gap:13px;margin:6px 0 18px}
+  .vcard{border-radius:16px;padding:18px;border:1.5px solid}
+  .vcard .vtop{display:flex;align-items:center;gap:9px;font-family:'Fredoka';font-weight:600;font-size:15.5px;margin-bottom:12px}
+  .vcard .vrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+  .vcard .vrow .l{font-size:13.5px;color:var(--soft)}
+  .vcard .vrow .v{font-family:'Fredoka';font-weight:700;font-size:20px}
+  .vmin{background:#fcecea;border-color:#f3d3cd}.vmin .vtop{color:var(--red)}.vmin .v{color:var(--red)}
+  .vfix{background:#edf8f0;border-color:#cdebd6}.vfix .vtop{color:var(--green)}.vfix .v{color:#1f7a44}
+
+  .savings{background:linear-gradient(160deg,#0f6e64,#0b4f48);color:#fff;border-radius:16px;padding:22px 20px;text-align:center;margin-bottom:18px}
+  .savings .sl{font-size:14px;opacity:.9;margin-bottom:4px}
+  .savings .sbig{font-family:'Fredoka';font-weight:700;font-size:34px;line-height:1.05}
+  .savings .ss{font-size:14.5px;opacity:.95;margin-top:8px;line-height:1.4}
+
+  .tips{background:#f3f8f4;border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-top:4px}
+  .tips h3{font-family:'Fredoka';font-weight:600;font-size:15px;color:var(--teal-deep);margin-bottom:9px;display:flex;align-items:center;gap:8px}
+  .tips ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .tips li{display:flex;gap:9px;font-size:14px;line-height:1.42}.tips li .mk{color:var(--teal);font-weight:800;flex:none}
+  .disclaimer{background:#f6f7f5;border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:12.5px;color:var(--soft);line-height:1.5;margin-top:14px}
+  .disclaimer b{color:var(--ink)}
+  .closing{text-align:center;font-family:'Fredoka';font-weight:500;font-size:15.5px;color:var(--teal-deep);line-height:1.4;margin:18px 6px 6px}
+  .brand{text-align:center;margin-top:14px;font-family:'Fredoka';font-weight:600;font-size:12.5px;color:var(--soft)}
+  .brand span{color:var(--teal)}
+  @media(max-width:430px){.hero{padding:36px 20px 28px}.hero h1{font-size:24px}.welcome-body,.body{padding-left:18px;padding-right:18px}.calc-head{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+
+  <section id="welcome" class="screen active">
+    <div class="hero">
+      <div class="ic">💳</div>
+      <div class="kicker">Educación financiera · VIVE</div>
+      <h1>¿Cuánto te cuesta el pago mínimo?</h1>
+      <p>Descubre cuántos años y cuánto dinero te cuesta pagar solo el mínimo… y cuánto ahorras si pagas un poco más.</p>
+    </div>
+    <div class="welcome-body">
+      <div class="idea">El pago mínimo se siente cómodo, pero es <b>la trampa que te mantiene endeudado por años</b>. Aquí lo vas a ver con tus propios números — y vas a ver la salida.</div>
+      <button class="btn" onclick="app.start()">Empezar →</button>
+    </div>
+  </section>
+
+  <section id="calc" class="screen">
+    <div class="calc-head"><h2>💳 El costo del pago mínimo</h2></div>
+    <div class="body">
+      <div class="field">
+        <label>¿Cuánto debes en tu tarjeta?</label>
+        <div class="inpwrap"><span class="pfx">$</span><input id="saldo" inputmode="numeric" placeholder="30,000" autocomplete="off"></div>
+      </div>
+      <div class="field">
+        <label>¿Cuál es tu tasa de interés anual?</label>
+        <div class="inpwrap"><input id="tasa" inputmode="numeric" value="37" autocomplete="off" style="text-align:left"><span class="sfx">% al año</span></div>
+        <div class="hint">La ves en tu estado de cuenta. Si no la sabes, deja el 37% (el promedio en México para quien financia).</div>
+      </div>
+      <div class="field">
+        <label>¿Cuánto podrías pagar al mes?</label>
+        <div class="inpwrap"><span class="pfx">$</span><input id="pago" inputmode="numeric" placeholder="2,000" autocomplete="off"><span class="sfx">fijo</span></div>
+        <div class="hint">Una cantidad fija que te comprometas a pagar cada mes, sin volver a usar la tarjeta.</div>
+      </div>
+      <div id="result"></div>
+    </div>
+  </section>
+
+</div></div>
+
+<script>
+const IVA=0.16, MIN_PCT=0.05, PISO=250;
+const fmt=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+const peso=n=>fmt.format(Math.max(0,Math.round(n)));
+const onlyNum=s=>{const v=parseInt(String(s).replace(/[^\d]/g,''),10);return isNaN(v)?0:v;};
+const tiempo=m=>{const a=Math.floor(m/12),me=m%12;if(a<=0)return me+(me===1?' mes':' meses');if(me===0)return a+(a===1?' año':' años');return a+(a===1?' año':' años')+' y '+me+(me===1?' mes':' meses');};
+
+function simula(saldo, tasaAnual, pagoFn){
+  const i=tasaAnual/100/12; let s=saldo, meses=0, totalInt=0, totalPagado=0; const MAX=1200;
+  while(s>1 && meses<MAX){
+    const interes=s*i, iva=interes*IVA;
+    let pago=pagoFn(s,interes,iva);
+    if(pago<=interes+iva) return {nunca:true};      // no cubre ni intereses
+    if(pago>s+interes+iva) pago=s+interes+iva;      // último pago
+    s=s-(pago-interes-iva);
+    totalInt+=interes+iva; totalPagado+=pago; meses++;
+  }
+  return {meses, totalInt:Math.round(totalInt), totalPagado:Math.round(totalPagado)};
+}
+const pagoMinimo=(s,interes,iva)=>Math.max(s*MIN_PCT, PISO, interes+iva+s*0.015);
+
+const app={
+  start(){ this.show('calc'); this.render(); setTimeout(()=>document.getElementById('saldo').focus(),300); },
+  show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});},
+
+  render(){
+    const saldo=onlyNum(document.getElementById('saldo').value);
+    const tasa=onlyNum(document.getElementById('tasa').value)||37;
+    const pago=onlyNum(document.getElementById('pago').value);
+    const box=document.getElementById('result');
+    if(saldo<=0){ box.innerHTML='<div class="empty"><span class="big">👆</span>Escribe cuánto debes y cuánto podrías pagar al mes para ver el resultado.</div>'; return; }
+
+    const min=simula(saldo,tasa,pagoMinimo);
+    let html='';
+
+    if(pago<=0){
+      box.innerHTML='<div class="warn">Escribe cuánto podrías pagar al mes (arriba) para comparar contra el pago mínimo. 👆</div>';
+      return;
+    }
+    const primerInteres=saldo*(tasa/100/12)*(1+IVA);
+    if(pago<=primerInteres){
+      box.innerHTML='<div class="warn"><b>Ese pago no alcanza.</b> Con '+peso(pago)+' al mes ni siquiera cubres los intereses ('+peso(primerInteres)+' el primer mes), así que tu deuda nunca bajaría. Necesitas pagar más que eso.</div>';
+      return;
+    }
+    const fix=simula(saldo,tasa,()=>pago);
+
+    // versus
+    html+='<div class="versus">'+
+      '<div class="vcard vmin"><div class="vtop">🐌 Pagando solo el mínimo</div>'+
+        '<div class="vrow"><span class="l">Tardarías</span><span class="v">'+tiempo(min.meses)+'</span></div>'+
+        '<div class="vrow"><span class="l">Pagarías de intereses</span><span class="v">'+peso(min.totalInt)+'</span></div></div>'+
+      '<div class="vcard vfix"><div class="vtop">🚀 Pagando '+peso(pago)+' fijo</div>'+
+        '<div class="vrow"><span class="l">Tardarías</span><span class="v">'+tiempo(fix.meses)+'</span></div>'+
+        '<div class="vrow"><span class="l">Pagarías de intereses</span><span class="v">'+peso(fix.totalInt)+'</span></div></div>'+
+      '</div>';
+
+    const ahorro=min.totalInt-fix.totalInt;
+    const mesesMenos=min.meses-fix.meses;
+    html+='<div class="savings"><div class="sl">Pagando '+peso(pago)+' fijo, te ahorras</div>'+
+      '<div class="sbig">'+peso(ahorro)+'</div>'+
+      '<div class="ss">y sales de la deuda <b>'+tiempo(mesesMenos)+' antes</b>. El mismo dinero, pero mucho menos tiempo pagando.</div></div>';
+
+    html+='<div class="tips"><h3>💡 Cómo salir más rápido</h3><ul>'+
+      '<li><span class="mk">•</span><span><b>Deja de usar la tarjeta</b> mientras la pagas: no puedes salir de un hoyo si sigues cavando.</span></li>'+
+      '<li><span class="mk">•</span><span>Paga siempre <b>una cantidad fija</b>, no el mínimo que te marca el banco (que baja cada mes y te alarga la deuda).</span></li>'+
+      '<li><span class="mk">•</span><span>Si tienes varias tarjetas, <b>ataca primero la de mayor interés</b> y a las demás dales su mínimo.</span></li>'+
+      '<li><span class="mk">•</span><span>Si de plano no te alcanza, <b>habla con tu banco</b>: pregunta por una reestructura a tasa fija más baja.</span></li>'+
+    '</ul></div>';
+
+    html+='<div class="closing">«El mínimo te mantiene pagando; una cantidad fija te saca de la deuda.»</div>';
+    html+='<div class="disclaimer"><b>Es una estimación.</b> Supone que dejas de usar la tarjeta, tasa fija y un pago mínimo aproximado (los bancos lo calculan distinto). Los intereses incluyen el 16% de IVA. El dato exacto está en tu estado de cuenta.</div>';
+    html+='<div class="brand">Programa <span>VIVE</span> · Educación financiera</div>';
+    box.innerHTML=html;
+  },
+};
+['saldo','tasa','pago'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',()=>{
+    if(id!=='tasa'){const v=onlyNum(el.value);el.value=v?v.toLocaleString('es-MX'):'';}
+    app.render();
+  });
+});
+</script>
+</body>
+</html>
